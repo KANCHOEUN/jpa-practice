@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
@@ -25,11 +27,15 @@ public class Category {
             inverseJoinColumns = @JoinColumn(name = "item_id")) // item으로 들어가는...
     private List<Item> items = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent") // self 양방향 관계
     private List<Category> child = new ArrayList<>();
 
+    public void addChildCategory(Category category) {
+        child.add(category);
+        category.setParent(this);
+    }
 }
